@@ -176,10 +176,55 @@ public class TickTackToeRunner extends Application {
         verifyIfFinish();
 
         handleComputerClick();
+        verifyIfFinish();
     }
 
     private void verifyIfFinish() {
-
+        if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("21").getImage() == ANIMATION_FOR_X && pawns.get("31").getImage() == ANIMATION_FOR_X) {
+            System.out.println("you win");
+            System.exit(0);
+        } else if (pawns.get("12").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("32").getImage() == ANIMATION_FOR_X) {
+            System.out.println("you win");
+            System.exit(0);
+        } else if (pawns.get("13").getImage() == ANIMATION_FOR_X && pawns.get("23").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
+            System.out.println("you win");
+            System.exit(0);
+        } else if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("12").getImage() == ANIMATION_FOR_X && pawns.get("13").getImage() == ANIMATION_FOR_X) {
+            System.out.println("you win");
+            System.exit(0);
+        } else if (pawns.get("21").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("23").getImage() == ANIMATION_FOR_X) {
+            System.out.println("you win");
+            System.exit(0);
+        } else if (pawns.get("31").getImage() == ANIMATION_FOR_X && pawns.get("32").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
+            System.out.println("you win");
+            System.exit(0);
+        } else if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
+            System.out.println("you win");
+            System.exit(0);
+        } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("21").getImage() == ANIMATION_FOR_Y && pawns.get("31").getImage() == ANIMATION_FOR_Y) {
+            System.out.println("comp win");
+            System.exit(0);
+        } else if (pawns.get("12").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("32").getImage() == ANIMATION_FOR_Y) {
+            System.out.println("comp win");
+            System.exit(0);
+        } else if (pawns.get("13").getImage() == ANIMATION_FOR_Y && pawns.get("23").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
+            System.out.println("comp win");
+            System.exit(0);
+        } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("12").getImage() == ANIMATION_FOR_Y && pawns.get("13").getImage() == ANIMATION_FOR_Y) {
+            System.out.println("comp win");
+            System.exit(0);
+        } else if (pawns.get("21").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("23").getImage() == ANIMATION_FOR_Y) {
+            System.out.println("comp win");
+            System.exit(0);
+        } else if (pawns.get("31").getImage() == ANIMATION_FOR_Y && pawns.get("32").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
+            System.out.println("comp win");
+            System.exit(0);
+        } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
+            System.out.println("comp win");
+            System.exit(0);
+        } else {
+            System.out.println("Carry on");
+        }
 
     }
 
@@ -195,7 +240,7 @@ public class TickTackToeRunner extends Application {
         if (imageView.getImage() != ANIMATION_FOR_Y && imageView.getImage() != ANIMATION_FOR_X) {
             imageView.setImage(ANIMATION_FOR_Y);
         } else {
-            System.out.println("Field is taked");
+            System.out.println("Field is taken");
             handleComputerClick();
         }
     }
