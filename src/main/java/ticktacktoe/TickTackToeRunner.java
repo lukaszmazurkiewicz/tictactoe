@@ -108,6 +108,7 @@ public class TickTackToeRunner extends Application {
         gameBoardPane.add(pawn11, 1, 1);
         pawns.put("11", pawn11);
 
+        
         pawn21 = newPawn(gameBoardPane, 2, 1);
         gameBoardPane.add(pawn21, 2, 1);
         pawns.put("21", pawn21);
