@@ -5,7 +5,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -108,7 +111,7 @@ public class TickTackToeRunner extends Application {
         gameBoardPane.add(pawn11, 1, 1);
         pawns.put("11", pawn11);
 
-        
+
         pawn21 = newPawn(gameBoardPane, 2, 1);
         gameBoardPane.add(pawn21, 2, 1);
         pawns.put("21", pawn21);
@@ -180,48 +183,57 @@ public class TickTackToeRunner extends Application {
         verifyIfFinish();
     }
 
+    public void showScore() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("ScoreBox");
+        alert.setHeaderText("You gain one point!");
+        alert.setContentText("Score: ");
+        alert.showAndWait();
+    }
+
     private void verifyIfFinish() {
+//        Dialog<String> dialog = new Dialog<>();
         if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("21").getImage() == ANIMATION_FOR_X && pawns.get("31").getImage() == ANIMATION_FOR_X) {
-            System.out.println("you win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("12").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("32").getImage() == ANIMATION_FOR_X) {
-            System.out.println("you win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("13").getImage() == ANIMATION_FOR_X && pawns.get("23").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
-            System.out.println("you win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("12").getImage() == ANIMATION_FOR_X && pawns.get("13").getImage() == ANIMATION_FOR_X) {
-            System.out.println("you win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("21").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("23").getImage() == ANIMATION_FOR_X) {
-            System.out.println("you win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("31").getImage() == ANIMATION_FOR_X && pawns.get("32").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
-            System.out.println("you win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
-            System.out.println("you win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("21").getImage() == ANIMATION_FOR_Y && pawns.get("31").getImage() == ANIMATION_FOR_Y) {
-            System.out.println("comp win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("12").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("32").getImage() == ANIMATION_FOR_Y) {
-            System.out.println("comp win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("13").getImage() == ANIMATION_FOR_Y && pawns.get("23").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
-            System.out.println("comp win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("12").getImage() == ANIMATION_FOR_Y && pawns.get("13").getImage() == ANIMATION_FOR_Y) {
-            System.out.println("comp win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("21").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("23").getImage() == ANIMATION_FOR_Y) {
-            System.out.println("comp win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("31").getImage() == ANIMATION_FOR_Y && pawns.get("32").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
-            System.out.println("comp win");
+            showScore();
             System.exit(0);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
-            System.out.println("comp win");
+            showScore();
             System.exit(0);
         } else {
             System.out.println("Carry on");
@@ -249,6 +261,9 @@ public class TickTackToeRunner extends Application {
     private void handleButtonClick(MouseEvent event) {
 
         if (event.getSource().equals(exitButton)) {
+            System.exit(0);
+        } else if (event.getSource().equals(newGameButton)) {
+            System.out.println("Hmmm , co tu zrobić?");
             System.exit(0);
         }
 
