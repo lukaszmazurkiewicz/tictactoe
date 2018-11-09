@@ -58,6 +58,8 @@ public class TickTackToeRunner extends Application {
 
     private HBox topScoreBoard;
     private Text playerOneName, playerOneScore, playerTwoName, playerTwoScore;
+    private int userScore;
+    private int compScore;
 
     public static void main(String[] args) {
         launch(args);
@@ -70,11 +72,11 @@ public class TickTackToeRunner extends Application {
 
         exitButton = new Button("Exit");
         exitButton.setMinSize(200, 30);
-        exitButton.setOnMouseClicked(e -> handleButtonClick(e));
+        exitButton.setOnMouseClicked(e -> handleButtonClick(primaryStage,e));
 
         newGameButton = new Button("New game");
         newGameButton.setMinSize(200, 30);
-        newGameButton.setOnMouseClicked(e -> handleButtonClick(e));
+        newGameButton.setOnMouseClicked(e -> handleButtonClick(primaryStage, e));
 
         buttons = new VBox(exitButton, newGameButton);
         buttons.setSpacing(20);
@@ -107,42 +109,7 @@ public class TickTackToeRunner extends Application {
         gameBoardPane.setCursor(new ImageCursor(IMAGE_FOR_CURSOR));
         gameBoardPane.setAlignment(Pos.CENTER);
 
-        pawn11 = newPawn(gameBoardPane, 1, 1);
-        gameBoardPane.add(pawn11, 1, 1);
-        pawns.put("11", pawn11);
-
-
-        pawn21 = newPawn(gameBoardPane, 2, 1);
-        gameBoardPane.add(pawn21, 2, 1);
-        pawns.put("21", pawn21);
-
-        pawn31 = newPawn(gameBoardPane, 3, 1);
-        gameBoardPane.add(pawn31, 3, 1);
-        pawns.put("31", pawn31);
-
-        pawn12 = newPawn(gameBoardPane, 1, 2);
-        gameBoardPane.add(pawn12, 1, 2);
-        pawns.put("12", pawn12);
-
-        pawn22 = newPawn(gameBoardPane, 2, 2);
-        gameBoardPane.add(pawn22, 2, 2);
-        pawns.put("22", pawn22);
-
-        pawn32 = newPawn(gameBoardPane, 3, 2);
-        gameBoardPane.add(pawn32, 3, 2);
-        pawns.put("32", pawn32);
-
-        pawn13 = newPawn(gameBoardPane, 1, 3);
-        gameBoardPane.add(pawn13, 1, 3);
-        pawns.put("13", pawn13);
-
-        pawn23 = newPawn(gameBoardPane, 2, 3);
-        gameBoardPane.add(pawn23, 2, 3);
-        pawns.put("23", pawn23);
-
-        pawn33 = newPawn(gameBoardPane, 3, 3);
-        gameBoardPane.add(pawn33, 3, 3);
-        pawns.put("33", pawn33);
+        pawnSetting(primaryStage, gameBoardPane);
 
 
         BorderPane borderPane = new BorderPane();
@@ -160,81 +127,142 @@ public class TickTackToeRunner extends Application {
 
     }
 
-    private ImageView newPawn(GridPane gameBoardPane, int col, int row) {
+    private void pawnSetting(Stage primaryStage, GridPane gameBoardPane) {
+        pawn11 = newPawn(primaryStage, gameBoardPane, 1, 1);
+        gameBoardPane.add(pawn11, 1, 1);
+        pawns.put("11", pawn11);
+
+
+        pawn21 = newPawn(primaryStage, gameBoardPane, 2, 1);
+        gameBoardPane.add(pawn21, 2, 1);
+        pawns.put("21", pawn21);
+
+        pawn31 = newPawn(primaryStage, gameBoardPane, 3, 1);
+        gameBoardPane.add(pawn31, 3, 1);
+        pawns.put("31", pawn31);
+
+        pawn12 = newPawn(primaryStage, gameBoardPane, 1, 2);
+        gameBoardPane.add(pawn12, 1, 2);
+        pawns.put("12", pawn12);
+
+        pawn22 = newPawn(primaryStage, gameBoardPane, 2, 2);
+        gameBoardPane.add(pawn22, 2, 2);
+        pawns.put("22", pawn22);
+
+        pawn32 = newPawn(primaryStage, gameBoardPane, 3, 2);
+        gameBoardPane.add(pawn32, 3, 2);
+        pawns.put("32", pawn32);
+
+        pawn13 = newPawn(primaryStage, gameBoardPane, 1, 3);
+        gameBoardPane.add(pawn13, 1, 3);
+        pawns.put("13", pawn13);
+
+        pawn23 = newPawn(primaryStage, gameBoardPane, 2, 3);
+        gameBoardPane.add(pawn23, 2, 3);
+        pawns.put("23", pawn23);
+
+        pawn33 = newPawn(primaryStage, gameBoardPane, 3, 3);
+        gameBoardPane.add(pawn33, 3, 3);
+        pawns.put("33", pawn33);
+    }
+
+    private ImageView newPawn(Stage primaryStage, GridPane gameBoardPane, int col, int row) {
         ImageView imageView = new ImageView(IMAGE_FOR_EMPTY_FIELD);
         imageView.fitWidthProperty().bind(gameBoardPane.widthProperty().multiply(PAWN_SIZE_MULTIPLIER));
         imageView.fitHeightProperty().bind(gameBoardPane.widthProperty().multiply(PAWN_SIZE_MULTIPLIER));
-//        imageView.setOnMouseEntered(e -> handleMouseEntersCell(e));
-//        imageView.setOnMouseExited(e -> handleMouseExitsCell(e));
-        imageView.setOnMouseClicked(e -> handleUserClick(e, col, row));
+        imageView.setOnMouseClicked(e -> handleUserClick(primaryStage, e, col, row));
 
         return imageView;
     }
 
-    private void handleUserClick(MouseEvent e, int col, int row) {
+    private void handleUserClick(Stage primaryStage, MouseEvent e, int col, int row) {
 
         ImageView view = (ImageView) e.getSource();
         view.setImage(ANIMATION_FOR_X);
         System.out.println("Player Col " + col + " Row " + row);
 
-        verifyIfFinish();
+        verifyIfFinish(primaryStage);
 
         handleComputerClick();
-        verifyIfFinish();
+        verifyIfFinish(primaryStage);
     }
 
     public void showScore() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("ScoreBox");
-        alert.setHeaderText("You gain one point!");
-        alert.setContentText("Score: ");
+        alert.setHeaderText("Human versus Machine");
+        alert.setContentText("Score: " + userScore + ":" + compScore);
         alert.showAndWait();
+        //String playerScore = Integer.toString(userScore);
+        playerOneScore = new Text(Integer.toString(userScore));
+        playerOneScore.setFont(Font.font("Verdana", 30));
+        playerOneScore.setFill(Color.AQUA);
+
+        playerTwoScore = new Text(Integer.toString(compScore));
+        playerTwoScore.setFont(Font.font("Verdana", 30));
+        playerTwoScore.setFill(Color.AQUA);
+
+        topScoreBoard = new HBox(playerOneName, playerOneScore, playerTwoName, playerTwoScore);
+        topScoreBoard.setSpacing(10);
     }
 
-    private void verifyIfFinish() {
-//        Dialog<String> dialog = new Dialog<>();
+    private void verifyIfFinish(Stage primaryStage) {
         if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("21").getImage() == ANIMATION_FOR_X && pawns.get("31").getImage() == ANIMATION_FOR_X) {
+            userScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("12").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("32").getImage() == ANIMATION_FOR_X) {
+            userScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("13").getImage() == ANIMATION_FOR_X && pawns.get("23").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
+            userScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("12").getImage() == ANIMATION_FOR_X && pawns.get("13").getImage() == ANIMATION_FOR_X) {
+            userScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("21").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("23").getImage() == ANIMATION_FOR_X) {
+            userScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("31").getImage() == ANIMATION_FOR_X && pawns.get("32").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
+            userScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
+            userScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("21").getImage() == ANIMATION_FOR_Y && pawns.get("31").getImage() == ANIMATION_FOR_Y) {
+            compScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("12").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("32").getImage() == ANIMATION_FOR_Y) {
+            compScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("13").getImage() == ANIMATION_FOR_Y && pawns.get("23").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
+            compScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("12").getImage() == ANIMATION_FOR_Y && pawns.get("13").getImage() == ANIMATION_FOR_Y) {
+            compScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("21").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("23").getImage() == ANIMATION_FOR_Y) {
+            compScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("31").getImage() == ANIMATION_FOR_Y && pawns.get("32").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
+            compScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
+            compScore+= 1;
             showScore();
-            System.exit(0);
+            newGame(primaryStage);
         } else {
             System.out.println("Carry on");
         }
@@ -258,32 +286,37 @@ public class TickTackToeRunner extends Application {
         }
     }
 
-    private void handleButtonClick(MouseEvent event) {
+    private void handleButtonClick(Stage primaryStage, MouseEvent event) {
 
         if (event.getSource().equals(exitButton)) {
             System.exit(0);
         } else if (event.getSource().equals(newGameButton)) {
-            System.out.println("Hmmm , co tu zrobić?");
-            System.exit(0);
+            newGame(primaryStage);
         }
 
     }
+    private void newGame(Stage primaryStage) {
+        BackgroundSize backgroundSize = new BackgroundSize(200, 200, true, true, true, true);
+        BackgroundImage backgroundImage = new BackgroundImage(IMAGE_FOR_BACKGROUND, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
+        Background background = new Background(backgroundImage);
 
-    private void handleMouseEntersCell(MouseEvent event) {
+        GridPane newGameBoardPane = new GridPane();
+        newGameBoardPane.setCursor(new ImageCursor(IMAGE_FOR_CURSOR));
+        newGameBoardPane.setAlignment(Pos.CENTER);
 
-        ImageView eventObject = (ImageView) event.getSource();
+        pawnSetting(primaryStage, newGameBoardPane);
 
-        if (eventObject.getImage().equals(IMAGE_FOR_EMPTY_FIELD)) {
-            eventObject.setImage(ANIMATION_FOR_X);
-        }
-    }
+        BorderPane borderPane = new BorderPane();
+        borderPane.setBackground(background);
+        borderPane.setCenter(newGameBoardPane);
+        borderPane.setLeft(buttons);
+        borderPane.setTop(topScoreBoard);
+        topScoreBoard.setAlignment(Pos.CENTER);
 
-    private void handleMouseExitsCell(MouseEvent event) {
+        Scene scene = new Scene(borderPane, 600, 600, Color.BLACK);
 
-        ImageView eventObject = (ImageView) event.getSource();
-
-        if (eventObject.getImage().equals(ANIMATION_FOR_X)) {
-            eventObject.setImage(IMAGE_FOR_EMPTY_FIELD);
-        }
+        primaryStage.setTitle("Tick Tack Toe");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 }
