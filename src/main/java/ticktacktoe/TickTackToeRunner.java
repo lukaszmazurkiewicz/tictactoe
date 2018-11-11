@@ -7,8 +7,6 @@ import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -40,6 +38,7 @@ public class TickTackToeRunner extends Application {
     private static final Image ANIMATION_FOR_Y = new Image("Graphics/circle.png");
     private static final Image IMAGE_FOR_CURSOR = new Image("Graphics/cursorIcon.png");
     private static final Image IMAGE_FOR_EMPTY_FIELD = new Image("Graphics/transparent.png");
+    private int moveCounter = 0;
 
     private Button exitButton, newGameButton;
     private VBox buttons;
@@ -178,7 +177,16 @@ public class TickTackToeRunner extends Application {
     private void handleUserClick(Stage primaryStage, MouseEvent e, int col, int row) {
 
         ImageView view = (ImageView) e.getSource();
-        view.setImage(ANIMATION_FOR_X);
+        if (view.getImage() != ANIMATION_FOR_X && view.getImage() != ANIMATION_FOR_Y) {
+            view.setImage(ANIMATION_FOR_X);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Error");
+            alert.setContentText("You cannot do that! You lose your move(for now)!");
+            alert.showAndWait();
+        }
+
+
         System.out.println("Player Col " + col + " Row " + row);
 
         verifyIfFinish(primaryStage);
@@ -235,6 +243,10 @@ public class TickTackToeRunner extends Application {
             userScore+= 1;
             showScore();
             newGame(primaryStage);
+        } else if (pawns.get("31").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("13").getImage() == ANIMATION_FOR_X) {
+            userScore+= 1;
+            showScore();
+            newGame(primaryStage);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("21").getImage() == ANIMATION_FOR_Y && pawns.get("31").getImage() == ANIMATION_FOR_Y) {
             compScore+= 1;
             showScore();
@@ -263,26 +275,61 @@ public class TickTackToeRunner extends Application {
             compScore+= 1;
             showScore();
             newGame(primaryStage);
-        } else {
-            System.out.println("Carry on");
+        } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
+            compScore+= 1;
+            showScore();
+            newGame(primaryStage);
+        } else if (pawns.get("11").getImage() != IMAGE_FOR_EMPTY_FIELD && pawns.get("12").getImage() != IMAGE_FOR_EMPTY_FIELD
+                                                                       && pawns.get("13").getImage() != IMAGE_FOR_EMPTY_FIELD
+                                                                       && pawns.get("21").getImage() != IMAGE_FOR_EMPTY_FIELD
+                                                                       && pawns.get("22").getImage() != IMAGE_FOR_EMPTY_FIELD
+                                                                       && pawns.get("23").getImage() != IMAGE_FOR_EMPTY_FIELD
+                                                                       && pawns.get("31").getImage() != IMAGE_FOR_EMPTY_FIELD
+                                                                       && pawns.get("32").getImage() != IMAGE_FOR_EMPTY_FIELD
+                                                                       && pawns.get("33").getImage() != IMAGE_FOR_EMPTY_FIELD) {
+            showScore();
+            newGame(primaryStage);
         }
-
     }
 
 
     private void handleComputerClick() {
-        int col = RANDOM.nextInt(3) + 1;
-        int row = RANDOM.nextInt(3) + 1;
-        System.out.println("Computer Col " + col + " Row " + row);
-
-        String key = String.valueOf(col) + String.valueOf(row);
-        ImageView imageView = pawns.get(key);
-
-        if (imageView.getImage() != ANIMATION_FOR_Y && imageView.getImage() != ANIMATION_FOR_X) {
-            imageView.setImage(ANIMATION_FOR_Y);
+        if (moveCounter == 0) {
+            ImageView imageView = pawns.get("11");
+            if (imageView.getImage() == IMAGE_FOR_EMPTY_FIELD) {
+                //imageView = pawns.get("31");
+                imageView.setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+            } else if (imageView.getImage() == ANIMATION_FOR_X){
+                imageView = pawns.get("31");
+                imageView.setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+            }
+        } else if (moveCounter == 1) {
+            ImageView imageView = pawns.get("33");
+            if (pawns.get("11").getImage() == ANIMATION_FOR_Y && imageView.getImage() == IMAGE_FOR_EMPTY_FIELD) {
+                imageView.setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+            } else if(pawns.get("11").getImage() == ANIMATION_FOR_Y && imageView.getImage() == ANIMATION_FOR_X) {
+                imageView = pawns.get("13");
+                imageView.setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+            } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("13").getImage() == ANIMATION_FOR_X) {
+                imageView = pawns.get("31");
+                imageView.setImage(ANIMATION_FOR_Y);
+            }
         } else {
-            System.out.println("Field is taken");
-            handleComputerClick();
+            int col = RANDOM.nextInt(3) + 1;
+            int row = RANDOM.nextInt(3) + 1;
+            System.out.println("Computer Col " + col + " Row " + row);
+            String key = String.valueOf(col) + String.valueOf(row);
+            ImageView imageView = pawns.get(key);
+            if (imageView.getImage() != ANIMATION_FOR_Y && imageView.getImage() != ANIMATION_FOR_X) {
+                imageView.setImage(ANIMATION_FOR_Y);
+            } else {
+                System.out.println("Field is taken");
+                handleComputerClick();
+            }
         }
     }
 
@@ -291,11 +338,27 @@ public class TickTackToeRunner extends Application {
         if (event.getSource().equals(exitButton)) {
             System.exit(0);
         } else if (event.getSource().equals(newGameButton)) {
+
+            userScore = 0;
+            compScore = 0;
+
+            playerOneScore = new Text(Integer.toString(userScore));
+            playerOneScore.setFont(Font.font("Verdana", 30));
+            playerOneScore.setFill(Color.AQUA);
+
+            playerTwoScore = new Text(Integer.toString(compScore));
+            playerTwoScore.setFont(Font.font("Verdana", 30));
+            playerTwoScore.setFill(Color.AQUA);
+
+            topScoreBoard = new HBox(playerOneName, playerOneScore, playerTwoName, playerTwoScore);
+            topScoreBoard.setSpacing(10);
+
             newGame(primaryStage);
         }
 
     }
     private void newGame(Stage primaryStage) {
+        moveCounter = 0;
         BackgroundSize backgroundSize = new BackgroundSize(200, 200, true, true, true, true);
         BackgroundImage backgroundImage = new BackgroundImage(IMAGE_FOR_BACKGROUND, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
@@ -311,6 +374,7 @@ public class TickTackToeRunner extends Application {
         borderPane.setCenter(newGameBoardPane);
         borderPane.setLeft(buttons);
         borderPane.setTop(topScoreBoard);
+
         topScoreBoard.setAlignment(Pos.CENTER);
 
         Scene scene = new Scene(borderPane, 600, 600, Color.BLACK);
