@@ -39,6 +39,10 @@ public class TickTackToeRunner extends Application {
     private static final Image IMAGE_FOR_CURSOR = new Image("Graphics/cursorIcon.png");
     private static final Image IMAGE_FOR_EMPTY_FIELD = new Image("Graphics/transparent.png");
     private int moveCounter = 0;
+    private boolean userWin = false;
+    private boolean compWin = false;
+    private boolean draw = false;
+    private boolean continueGame = true;
 
     private Button exitButton, newGameButton;
     private VBox buttons;
@@ -71,7 +75,7 @@ public class TickTackToeRunner extends Application {
 
         exitButton = new Button("Exit");
         exitButton.setMinSize(200, 30);
-        exitButton.setOnMouseClicked(e -> handleButtonClick(primaryStage,e));
+        exitButton.setOnMouseClicked(e -> handleButtonClick(primaryStage, e));
 
         newGameButton = new Button("New game");
         newGameButton.setMinSize(200, 30);
@@ -100,29 +104,7 @@ public class TickTackToeRunner extends Application {
         topScoreBoard = new HBox(playerOneName, playerOneScore, playerTwoName, playerTwoScore);
         topScoreBoard.setSpacing(10);
 
-        BackgroundSize backgroundSize = new BackgroundSize(200, 200, true, true, true, true);
-        BackgroundImage backgroundImage = new BackgroundImage(IMAGE_FOR_BACKGROUND, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
-        Background background = new Background(backgroundImage);
-
-        GridPane gameBoardPane = new GridPane();
-        gameBoardPane.setCursor(new ImageCursor(IMAGE_FOR_CURSOR));
-        gameBoardPane.setAlignment(Pos.CENTER);
-
-        pawnSetting(primaryStage, gameBoardPane);
-
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setBackground(background);
-        borderPane.setCenter(gameBoardPane);
-        borderPane.setLeft(buttons);
-        borderPane.setTop(topScoreBoard);
-        topScoreBoard.setAlignment(Pos.CENTER);
-
-        Scene scene = new Scene(borderPane, 600, 600, Color.BLACK);
-
-        primaryStage.setTitle("Tick Tack Toe");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        newGame(primaryStage);
 
     }
 
@@ -179,20 +161,40 @@ public class TickTackToeRunner extends Application {
         ImageView view = (ImageView) e.getSource();
         if (view.getImage() != ANIMATION_FOR_X && view.getImage() != ANIMATION_FOR_Y) {
             view.setImage(ANIMATION_FOR_X);
+            System.out.println("Player Col " + col + " Row " + row);
+
+            verifyIfFinish();
+            if (userWin) {
+                userScore += 1;
+                showScore();
+                userWin = false;
+                newGame(primaryStage);
+            } else if (draw) {
+                showScore();
+                newGame(primaryStage);
+                draw = false;
+            }
+
+            handleComputerClick();
+            verifyIfFinish();
+            if (compWin) {
+                compScore += 1;
+                showScore();
+                compWin = false;
+                newGame(primaryStage);
+            } else if (draw) {
+                showScore();
+                newGame(primaryStage);
+                draw = false;
+            }
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
-            alert.setContentText("You cannot do that! You lose your move(for now)!");
+            alert.setContentText("You cannot do that!");
             alert.showAndWait();
+            view.setOnMouseClicked(event -> handleUserClick(primaryStage, event, col, row));
         }
 
-
-        System.out.println("Player Col " + col + " Row " + row);
-
-        verifyIfFinish(primaryStage);
-
-        handleComputerClick();
-        verifyIfFinish(primaryStage);
     }
 
     public void showScore() {
@@ -201,7 +203,6 @@ public class TickTackToeRunner extends Application {
         alert.setHeaderText("Human versus Machine");
         alert.setContentText("Score: " + userScore + ":" + compScore);
         alert.showAndWait();
-        //String playerScore = Integer.toString(userScore);
         playerOneScore = new Text(Integer.toString(userScore));
         playerOneScore.setFont(Font.font("Verdana", 30));
         playerOneScore.setFill(Color.AQUA);
@@ -214,71 +215,39 @@ public class TickTackToeRunner extends Application {
         topScoreBoard.setSpacing(10);
     }
 
-    private void verifyIfFinish(Stage primaryStage) {
+    private void verifyIfFinish() {
         if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("21").getImage() == ANIMATION_FOR_X && pawns.get("31").getImage() == ANIMATION_FOR_X) {
-            userScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            userWin = true;
         } else if (pawns.get("12").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("32").getImage() == ANIMATION_FOR_X) {
-            userScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            userWin = true;
         } else if (pawns.get("13").getImage() == ANIMATION_FOR_X && pawns.get("23").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
-            userScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            userWin = true;
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("12").getImage() == ANIMATION_FOR_X && pawns.get("13").getImage() == ANIMATION_FOR_X) {
-            userScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            userWin = true;
         } else if (pawns.get("21").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("23").getImage() == ANIMATION_FOR_X) {
-            userScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            userWin = true;
         } else if (pawns.get("31").getImage() == ANIMATION_FOR_X && pawns.get("32").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
-            userScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            userWin = true;
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("33").getImage() == ANIMATION_FOR_X) {
-            userScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            userWin = true;
         } else if (pawns.get("31").getImage() == ANIMATION_FOR_X && pawns.get("22").getImage() == ANIMATION_FOR_X && pawns.get("13").getImage() == ANIMATION_FOR_X) {
-            userScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            userWin = true;
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("21").getImage() == ANIMATION_FOR_Y && pawns.get("31").getImage() == ANIMATION_FOR_Y) {
-            compScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            compWin = true;
         } else if (pawns.get("12").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("32").getImage() == ANIMATION_FOR_Y) {
-            compScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            compWin = true;
         } else if (pawns.get("13").getImage() == ANIMATION_FOR_Y && pawns.get("23").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
-            compScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            compWin = true;
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("12").getImage() == ANIMATION_FOR_Y && pawns.get("13").getImage() == ANIMATION_FOR_Y) {
-            compScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            compWin = true;
         } else if (pawns.get("21").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("23").getImage() == ANIMATION_FOR_Y) {
-            compScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            compWin = true;
         } else if (pawns.get("31").getImage() == ANIMATION_FOR_Y && pawns.get("32").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
-            compScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            compWin = true;
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
-            compScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            compWin = true;
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
-            compScore+= 1;
-            showScore();
-            newGame(primaryStage);
+            compWin = true;
         } else if (pawns.get("11").getImage() != IMAGE_FOR_EMPTY_FIELD && pawns.get("12").getImage() != IMAGE_FOR_EMPTY_FIELD
                                                                        && pawns.get("13").getImage() != IMAGE_FOR_EMPTY_FIELD
                                                                        && pawns.get("21").getImage() != IMAGE_FOR_EMPTY_FIELD
@@ -287,8 +256,7 @@ public class TickTackToeRunner extends Application {
                                                                        && pawns.get("31").getImage() != IMAGE_FOR_EMPTY_FIELD
                                                                        && pawns.get("32").getImage() != IMAGE_FOR_EMPTY_FIELD
                                                                        && pawns.get("33").getImage() != IMAGE_FOR_EMPTY_FIELD) {
-            showScore();
-            newGame(primaryStage);
+            draw = true;
         }
     }
 
@@ -297,26 +265,36 @@ public class TickTackToeRunner extends Application {
         if (moveCounter == 0) {
             ImageView imageView = pawns.get("11");
             if (imageView.getImage() == IMAGE_FOR_EMPTY_FIELD) {
-                //imageView = pawns.get("31");
                 imageView.setImage(ANIMATION_FOR_Y);
                 moveCounter++;
-            } else if (imageView.getImage() == ANIMATION_FOR_X){
+            } else if (imageView.getImage() == ANIMATION_FOR_X) {
                 imageView = pawns.get("31");
                 imageView.setImage(ANIMATION_FOR_Y);
                 moveCounter++;
             }
         } else if (moveCounter == 1) {
             ImageView imageView = pawns.get("33");
-            if (pawns.get("11").getImage() == ANIMATION_FOR_Y && imageView.getImage() == IMAGE_FOR_EMPTY_FIELD) {
+            canHeWin();
+            if (continueGame && pawns.get("11").getImage() == ANIMATION_FOR_Y && imageView.getImage() == IMAGE_FOR_EMPTY_FIELD) {
                 imageView.setImage(ANIMATION_FOR_Y);
                 moveCounter++;
-            } else if(pawns.get("11").getImage() == ANIMATION_FOR_Y && imageView.getImage() == ANIMATION_FOR_X) {
-                imageView = pawns.get("13");
-                imageView.setImage(ANIMATION_FOR_Y);
+                continueGame = false;
+            } else if (continueGame && pawns.get("11").getImage() == ANIMATION_FOR_Y && imageView.getImage() == ANIMATION_FOR_X) {
+                pawns.get("13").setImage(ANIMATION_FOR_Y);
                 moveCounter++;
-            } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("13").getImage() == ANIMATION_FOR_X) {
-                imageView = pawns.get("31");
-                imageView.setImage(ANIMATION_FOR_Y);
+                continueGame = false;
+            } else if (continueGame && pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("13").getImage() == ANIMATION_FOR_X) {
+                pawns.get("31").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+                continueGame = false;
+            } else if (continueGame && pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("13").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+                pawns.get("13").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+                continueGame = false;
+            } else if (continueGame && pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("13").getImage() == ANIMATION_FOR_X) {
+                pawns.get("33").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+                continueGame = false;
             }
         } else {
             int col = RANDOM.nextInt(3) + 1;
@@ -324,9 +302,12 @@ public class TickTackToeRunner extends Application {
             System.out.println("Computer Col " + col + " Row " + row);
             String key = String.valueOf(col) + String.valueOf(row);
             ImageView imageView = pawns.get(key);
-            if (imageView.getImage() != ANIMATION_FOR_Y && imageView.getImage() != ANIMATION_FOR_X) {
+            canHeWin();
+            if (continueGame && imageView.getImage() != ANIMATION_FOR_Y && imageView.getImage() != ANIMATION_FOR_X) {
                 imageView.setImage(ANIMATION_FOR_Y);
-            } else {
+                moveCounter++;
+                continueGame = false;
+            } else if (continueGame && (imageView.getImage() == ANIMATION_FOR_Y || imageView.getImage() == ANIMATION_FOR_X)){
                 System.out.println("Field is taken");
                 handleComputerClick();
             }
@@ -357,6 +338,7 @@ public class TickTackToeRunner extends Application {
         }
 
     }
+
     private void newGame(Stage primaryStage) {
         moveCounter = 0;
         BackgroundSize backgroundSize = new BackgroundSize(200, 200, true, true, true, true);
@@ -382,5 +364,32 @@ public class TickTackToeRunner extends Application {
         primaryStage.setTitle("Tick Tack Toe");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private boolean canHeWin() {
+        for (Map.Entry<String, ImageView> entry : pawns.entrySet()) {
+            if (entry.getValue().getImage() == IMAGE_FOR_EMPTY_FIELD) {
+                entry.getValue().setImage(ANIMATION_FOR_Y);
+                verifyIfFinish();
+                if (compWin) {
+                    compWin = false;
+                    continueGame = false;
+                    break;
+                }
+                entry.getValue().setImage(ANIMATION_FOR_X);
+                verifyIfFinish();
+                if (userWin) {
+                    continueGame = false;
+                    userWin = false;
+                    entry.getValue().setImage(ANIMATION_FOR_Y);
+                    break;
+                }
+
+                entry.getValue().setImage(IMAGE_FOR_EMPTY_FIELD);
+                continueGame = true;
+            }
+
+        }
+        return continueGame;
     }
 }
