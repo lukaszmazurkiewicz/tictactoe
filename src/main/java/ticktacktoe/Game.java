@@ -18,14 +18,19 @@ import static ticktacktoe.Graphics.ANIMATION_FOR_X;
 
 public class Game {
 
+    private Pawn pawn;
     private Button exitButton, newGameButton;
     private VBox buttons;
 
     private HBox topScoreBoard;
     private Text playerOneName, playerOneScore, playerTwoName, playerTwoScore;
 
-    private Pawn pawn = new Pawn();
     private Users user = new Users();
+    //private Pawn pawn;
+
+    public Game() {
+        pawn = new Pawn(this);
+    }
 
     public void gamePlay(Stage primaryStage) {
         exitButton = new Button("Exit");
@@ -137,6 +142,7 @@ public class Game {
             System.out.println("Player Col " + col + " Row " + row);
 
             pawn.verifyIfFinish();
+
             if (user.isUserWin()) {
                 user.setUserScore(user.getUserScore() + 1);
                 showScore();
@@ -150,10 +156,11 @@ public class Game {
 
             pawn.handleComputerClick();
             pawn.verifyIfFinish();
-            if (user.isUserWin()) {
+
+            if (user.isCompWin()) {
                 user.setCompScore(user.getCompScore() + 1);
                 showScore();
-                user.setUserWin(false);
+                user.setCompWin(false);
                 newGame(primaryStage);
             } else if (user.isDraw()) {
                 showScore();

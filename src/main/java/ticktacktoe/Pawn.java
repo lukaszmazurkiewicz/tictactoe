@@ -14,6 +14,9 @@ import static ticktacktoe.Graphics.IMAGE_FOR_EMPTY_FIELD;
 
 public class Pawn {
     private static final double PAWN_SIZE_MULTIPLIER = 0.30;
+    private static final Random RANDOM = new Random();
+
+    private Game game;
 
     private ImageView pawn11;
     private ImageView pawn12;
@@ -27,13 +30,14 @@ public class Pawn {
 
     private Map<String, ImageView> pawns = new HashMap<>();
 
-    private static final Random RANDOM = new Random();
-
     private int moveCounter = 0;
     private boolean continueGame = true;
 
+    public Pawn(Game game) {
+        this.game = game;
+    }
+
     private Users user = new Users();
-    Game game = new Game();
 
     public void setMoveCounter(int moveCounter) {
         this.moveCounter = moveCounter;
