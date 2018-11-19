@@ -5,8 +5,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -26,6 +26,7 @@ import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -38,6 +39,7 @@ public class TickTackToeRunner extends Application {
     private static final Image ANIMATION_FOR_Y = new Image("Graphics/circle.png");
     private static final Image IMAGE_FOR_CURSOR = new Image("Graphics/cursorIcon.png");
     private static final Image IMAGE_FOR_EMPTY_FIELD = new Image("Graphics/transparent.png");
+    private int numberOfRounds;
     private int moveCounter = 0;
     private boolean userWin = false;
     private boolean compWin = false;
@@ -63,6 +65,7 @@ public class TickTackToeRunner extends Application {
     private Text playerOneName, playerOneScore, playerTwoName, playerTwoScore;
     private int userScore;
     private int compScore;
+    private String playerName;
 
     public static void main(String[] args) {
         launch(args);
@@ -85,7 +88,45 @@ public class TickTackToeRunner extends Application {
         buttons.setSpacing(20);
         buttons.setPadding(new Insets(20, 20, 20, 20));
 
-        playerOneName = new Text("Player One: ");
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Imię.");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Please enter your name:");
+        Optional<String> result = dialog.showAndWait();
+        playerName = result.get();
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Rundy");
+        alert.setHeaderText("Do ilu wygranych rund chcesz zagrać?");
+        alert.setContentText("Choose your option.");
+
+        ButtonType buttonTypeOne = new ButtonType("One");
+        ButtonType buttonTypeTwo = new ButtonType("Two");
+        ButtonType buttonTypeThree = new ButtonType("Three");
+        ButtonType buttonTypeFour = new ButtonType("Four");
+        ButtonType buttonTypeFive = new ButtonType("Five");
+        ButtonType buttonTypeCancel = new ButtonType("Exit", ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeThree, buttonTypeFour, buttonTypeFive, buttonTypeCancel);
+
+        Optional<ButtonType> result1 = alert.showAndWait();
+        if (result1.get() == buttonTypeOne){
+            numberOfRounds = 1;
+        } else if (result1.get() == buttonTypeTwo) {
+            numberOfRounds = 2;
+        } else if (result1.get() == buttonTypeThree) {
+            numberOfRounds = 3;
+        } else if (result1.get() == buttonTypeFour) {
+            numberOfRounds = 4;
+        } else if (result1.get() == buttonTypeFive) {
+            numberOfRounds = 5;
+        } else {
+            System.exit(0);
+        }
+
+
+        //playerOneName = new Text("Player One: ");
+        playerOneName = new Text(playerName);
         playerOneName.setFont(Font.font("Verdana", 30));
         playerOneName.setFill(Color.AQUA);
 
@@ -198,21 +239,25 @@ public class TickTackToeRunner extends Application {
     }
 
     public void showScore() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("ScoreBox");
-        alert.setHeaderText("Human versus Machine");
-        alert.setContentText("Score: " + userScore + ":" + compScore);
-        alert.showAndWait();
-        playerOneScore = new Text(Integer.toString(userScore));
-        playerOneScore.setFont(Font.font("Verdana", 30));
-        playerOneScore.setFill(Color.AQUA);
+        if (userScore >= numberOfRounds || compScore >= numberOfRounds) {
+            System.exit(0);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("ScoreBox");
+            alert.setHeaderText("Human versus Machine");
+            alert.setContentText("Score: " + userScore + ":" + compScore);
+            alert.showAndWait();
+            playerOneScore = new Text(Integer.toString(userScore));
+            playerOneScore.setFont(Font.font("Verdana", 30));
+            playerOneScore.setFill(Color.AQUA);
 
-        playerTwoScore = new Text(Integer.toString(compScore));
-        playerTwoScore.setFont(Font.font("Verdana", 30));
-        playerTwoScore.setFill(Color.AQUA);
+            playerTwoScore = new Text(Integer.toString(compScore));
+            playerTwoScore.setFont(Font.font("Verdana", 30));
+            playerTwoScore.setFill(Color.AQUA);
 
-        topScoreBoard = new HBox(playerOneName, playerOneScore, playerTwoName, playerTwoScore);
-        topScoreBoard.setSpacing(10);
+            topScoreBoard = new HBox(playerOneName, playerOneScore, playerTwoName, playerTwoScore);
+            topScoreBoard.setSpacing(10);
+        }
     }
 
     private void verifyIfFinish() {
@@ -289,17 +334,7 @@ public class TickTackToeRunner extends Application {
                 pawns.get("22").setImage(ANIMATION_FOR_Y);
                 moveCounter++;
             }
-            /*ImageView imageView = pawns.get("11");
-            if (imageView.getImage() == IMAGE_FOR_EMPTY_FIELD) {
-                imageView.setImage(ANIMATION_FOR_Y);
-                moveCounter++;
-            } else if (imageView.getImage() == ANIMATION_FOR_X) {
-                imageView = pawns.get("31");
-                imageView.setImage(ANIMATION_FOR_Y);
-                moveCounter++;
-            }*/
         } else if (moveCounter == 1) {
-//            ImageView imageView = pawns.get("33");
             canHeWin();
             if (continueGame && path == 0 && pawns.get("33").getImage() == IMAGE_FOR_EMPTY_FIELD) {
 
@@ -334,41 +369,20 @@ public class TickTackToeRunner extends Application {
                 moveCounter++;
 
             }
-            /*if (continueGame && pawns.get("11").getImage() == ANIMATION_FOR_Y && imageView.getImage() == IMAGE_FOR_EMPTY_FIELD) {
-                imageView.setImage(ANIMATION_FOR_Y);
-                moveCounter++;
-                continueGame = false;
-            } else if (continueGame && pawns.get("11").getImage() == ANIMATION_FOR_Y && imageView.getImage() == ANIMATION_FOR_X) {
-                pawns.get("13").setImage(ANIMATION_FOR_Y);
-                moveCounter++;
-                continueGame = false;
-            } else if (continueGame && pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("13").getImage() == ANIMATION_FOR_X) {
-                pawns.get("31").setImage(ANIMATION_FOR_Y);
-                moveCounter++;
-                continueGame = false;
-            } else if (continueGame && pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("13").getImage() == IMAGE_FOR_EMPTY_FIELD) {
-                pawns.get("13").setImage(ANIMATION_FOR_Y);
-                moveCounter++;
-                continueGame = false;
-            } else if (continueGame && pawns.get("11").getImage() == ANIMATION_FOR_X && pawns.get("13").getImage() == ANIMATION_FOR_X) {
-                pawns.get("33").setImage(ANIMATION_FOR_Y);
-                moveCounter++;
-                continueGame = false;
-            }*/
         } else {
-            int col = RANDOM.nextInt(3) + 1;
-            int row = RANDOM.nextInt(3) + 1;
-            System.out.println("Computer Col " + col + " Row " + row);
-            String key = String.valueOf(col) + String.valueOf(row);
-            ImageView imageView = pawns.get(key);
+            continueGame = true;
             canHeWin();
-            if (continueGame && imageView.getImage() != ANIMATION_FOR_Y && imageView.getImage() != ANIMATION_FOR_X) {
-                imageView.setImage(ANIMATION_FOR_Y);
-                moveCounter++;
-                continueGame = false;
-            } else if (continueGame && (imageView.getImage() == ANIMATION_FOR_Y || imageView.getImage() == ANIMATION_FOR_X)){
-                System.out.println("Field is taken");
-                handleComputerClick();
+            if (continueGame) {
+
+                String key = "22";
+                while (pawns.get(key).getImage() != IMAGE_FOR_EMPTY_FIELD) {
+                    int col = RANDOM.nextInt(3) + 1;
+                    int row = RANDOM.nextInt(3) + 1;
+                    key = String.valueOf(col) + String.valueOf(row);
+                }
+
+                pawns.get(key).setImage(ANIMATION_FOR_Y);
+
             }
         }
     }
@@ -425,35 +439,6 @@ public class TickTackToeRunner extends Application {
         primaryStage.show();
     }
 
-    /*private boolean canHeWin() {
-        for (Map.Entry<String, ImageView> entry : pawns.entrySet()) {
-            if (entry.getValue().getImage() == IMAGE_FOR_EMPTY_FIELD) {
-                entry.getValue().setImage(ANIMATION_FOR_Y);
-                verifyIfFinish();
-                if (compWin) {
-                    compWin = false;
-                    continueGame = false;
-                    moveCounter++;
-                    break;
-                }
-                entry.getValue().setImage(ANIMATION_FOR_X);
-                verifyIfFinish();
-                if (userWin) {
-                    continueGame = false;
-                    userWin = false;
-                    entry.getValue().setImage(ANIMATION_FOR_Y);
-                    moveCounter++;
-                    break;
-                }
-
-                entry.getValue().setImage(IMAGE_FOR_EMPTY_FIELD);
-                continueGame = true;
-            }
-
-        }
-        return continueGame;
-    }*/
-
     private boolean canHeWin() {
         String winningMove = "0";
         String defendingMove = "0";
@@ -465,23 +450,15 @@ public class TickTackToeRunner extends Application {
                     winningMove = entry.getKey();
                     compWin = false;
                     entry.getValue().setImage(IMAGE_FOR_EMPTY_FIELD);
-                    //continueGame = false;
-                    //moveCounter++;
-                    //break;
                 }
                 entry.getValue().setImage(ANIMATION_FOR_X);
                 verifyIfFinish();
                 if (userWin) {
                     defendingMove = entry.getKey();
-                    //continueGame = false;
                     userWin = false;
                     entry.getValue().setImage(IMAGE_FOR_EMPTY_FIELD);
-                    //moveCounter++;
-                    //break;
                 }
-
                 entry.getValue().setImage(IMAGE_FOR_EMPTY_FIELD);
-                //continueGame = true;
             }
 
         }
@@ -498,4 +475,13 @@ public class TickTackToeRunner extends Application {
         }
         return continueGame;
     }
+
+   /* private void getPlayerName() {
+        Label label1 = new Label("Name:");
+        TextField textField = new TextField();
+        HBox hb = new HBox();
+        hb.getChildren().addAll(label1, textField);
+        hb.setSpacing(10);
+        playerName = textField.getText();
+    }*/
 }
