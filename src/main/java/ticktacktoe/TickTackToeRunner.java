@@ -46,7 +46,7 @@ public class TickTackToeRunner extends Application {
     private boolean draw = false;
     private boolean continueGame = true;
 
-    private Button exitButton, newGameButton;
+    private Button exitButton, newGameButton, twoPlayersButton;
     private VBox buttons;
 
     private ImageView pawn11;
@@ -84,7 +84,12 @@ public class TickTackToeRunner extends Application {
         newGameButton.setMinSize(200, 30);
         newGameButton.setOnMouseClicked(e -> handleButtonClick(primaryStage, e));
 
-        buttons = new VBox(exitButton, newGameButton);
+        twoPlayersButton = new Button ("Two Players");
+        twoPlayersButton.setMinSize(200,30);
+        twoPlayersButton.setOnMouseClicked(e -> handleButtonClick(primaryStage, e));
+
+
+        buttons = new VBox(exitButton, newGameButton, twoPlayersButton);
         buttons.setSpacing(20);
         buttons.setPadding(new Insets(20, 20, 20, 20));
 
@@ -124,8 +129,6 @@ public class TickTackToeRunner extends Application {
             System.exit(0);
         }
 
-
-        //playerOneName = new Text("Player One: ");
         playerOneName = new Text(playerName);
         playerOneName.setFont(Font.font("Verdana", 30));
         playerOneName.setFill(Color.AQUA);
@@ -207,11 +210,11 @@ public class TickTackToeRunner extends Application {
             verifyIfFinish();
             if (userWin) {
                 userScore += 1;
-                showScore();
+                showScore(primaryStage);
                 userWin = false;
                 newGame(primaryStage);
             } else if (draw) {
-                showScore();
+                showScore(primaryStage);
                 newGame(primaryStage);
                 draw = false;
             }
@@ -220,11 +223,11 @@ public class TickTackToeRunner extends Application {
             verifyIfFinish();
             if (compWin) {
                 compScore += 1;
-                showScore();
+                showScore(primaryStage);
                 compWin = false;
                 newGame(primaryStage);
             } else if (draw) {
-                showScore();
+                showScore(primaryStage);
                 newGame(primaryStage);
                 draw = false;
             }
@@ -238,9 +241,31 @@ public class TickTackToeRunner extends Application {
 
     }
 
-    public void showScore() {
+    public void showScore(Stage primaryStage) {
         if (userScore >= numberOfRounds || compScore >= numberOfRounds) {
-            System.exit(0);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("End of the Game!");
+            alert.setHeaderText(null);
+            if (userScore == numberOfRounds) {
+                alert.setContentText("You just won the game!");
+                //alert.showAndWait();
+            } else if (compScore == numberOfRounds) {
+                alert.setContentText("You just lost the game!");
+                //alert.showAndWait();
+            }
+
+            ButtonType buttonNewGame = new ButtonType("New Game");
+            ButtonType buttonExitGame = new ButtonType("Exit Game");
+
+            alert.getButtonTypes().setAll(buttonNewGame, buttonExitGame);
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.get() == buttonNewGame) {
+                newGame(primaryStage);
+            } else if (result.get() == buttonExitGame) {
+                System.exit(0);
+            }
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("ScoreBox");
@@ -408,6 +433,10 @@ public class TickTackToeRunner extends Application {
             topScoreBoard.setSpacing(10);
 
             newGame(primaryStage);
+        } else if (event.getSource().equals(twoPlayersButton)) {
+
+            System.out.println("To Do");
+            System.exit(0);
         }
 
     }
@@ -475,13 +504,4 @@ public class TickTackToeRunner extends Application {
         }
         return continueGame;
     }
-
-   /* private void getPlayerName() {
-        Label label1 = new Label("Name:");
-        TextField textField = new TextField();
-        HBox hb = new HBox();
-        hb.getChildren().addAll(label1, textField);
-        hb.setSpacing(10);
-        playerName = textField.getText();
-    }*/
 }
