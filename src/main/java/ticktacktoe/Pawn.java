@@ -17,6 +17,7 @@ public class Pawn {
     private static final Random RANDOM = new Random();
 
     private Game game;
+    private Users user;
 
     private ImageView pawn11;
     private ImageView pawn12;
@@ -33,11 +34,11 @@ public class Pawn {
     private int moveCounter = 0;
     private boolean continueGame = true;
 
-    public Pawn(Game game) {
+    public Pawn(Game game, Users user) {
         this.game = game;
+        this.user = user;
     }
 
-    private Users user = new Users();
 
     public void setMoveCounter(int moveCounter) {
         this.moveCounter = moveCounter;
@@ -149,81 +150,119 @@ public class Pawn {
     }
 
     public boolean canHeWin() {
-        for (Map.Entry<String, ImageView> entry : getPawns().entrySet()) {
+        String winningMove = "0";
+        String defendingMove = "0";
+        for (Map.Entry<String, ImageView> entry : pawns.entrySet()) {
             if (entry.getValue().getImage() == IMAGE_FOR_EMPTY_FIELD) {
                 entry.getValue().setImage(ANIMATION_FOR_Y);
                 verifyIfFinish();
-                if (user.isUserWin()) {
+                if (user.isCompWin()) {
+                    winningMove = entry.getKey();
                     user.setCompWin(false);
-                    setContinueGame(false);
-                    break;
+                    entry.getValue().setImage(IMAGE_FOR_EMPTY_FIELD);
                 }
                 entry.getValue().setImage(ANIMATION_FOR_X);
                 verifyIfFinish();
                 if (user.isUserWin()) {
-                    setContinueGame(false);
-                    user.setCompWin(false);
-                    entry.getValue().setImage(ANIMATION_FOR_Y);
-                    break;
+                    defendingMove = entry.getKey();
+                    user.setUserWin(false);
+                    entry.getValue().setImage(IMAGE_FOR_EMPTY_FIELD);
                 }
-
                 entry.getValue().setImage(IMAGE_FOR_EMPTY_FIELD);
-                setContinueGame(true);
             }
 
         }
-        return isContinueGame();
+        if (!winningMove.equals("0")) {
+
+            pawns.get(winningMove).setImage(ANIMATION_FOR_Y);
+            moveCounter++;
+            continueGame = false;
+
+        } else if (winningMove.equals("0") && !defendingMove.equals("0")) {
+            pawns.get(defendingMove).setImage(ANIMATION_FOR_Y);
+            moveCounter++;
+            continueGame = false;
+        }
+        return continueGame;
     }
 
     public void handleComputerClick() {
+        int path = RANDOM.nextInt(4);
         if (moveCounter == 0) {
-            ImageView imageView = getPawns().get("11");
-            if (imageView.getImage() == IMAGE_FOR_EMPTY_FIELD) {
-                imageView.setImage(ANIMATION_FOR_Y);
+            //int path = RANDOM.nextInt(4);
+            if (path == 0 && pawns.get("11").getImage() == IMAGE_FOR_EMPTY_FIELD){
+
+                pawns.get("11").setImage(ANIMATION_FOR_Y);
                 moveCounter++;
-            } else if (imageView.getImage() == ANIMATION_FOR_X) {
-                imageView = getPawns().get("31");
-                imageView.setImage(ANIMATION_FOR_Y);
+
+            } else if (path == 1 && pawns.get("31").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("31").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            } else if (path == 2 && pawns.get("13").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("13").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            } else if (path == 3 && pawns.get("33").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("33").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            } else {
+                pawns.get("22").setImage(ANIMATION_FOR_Y);
                 moveCounter++;
             }
         } else if (moveCounter == 1) {
-            ImageView imageView = getPawns().get("33");
             canHeWin();
-            if (continueGame && getPawns().get("11").getImage() == ANIMATION_FOR_Y && imageView.getImage() == IMAGE_FOR_EMPTY_FIELD) {
-                imageView.setImage(ANIMATION_FOR_Y);
+            if (continueGame && path == 0 && pawns.get("33").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("33").setImage(ANIMATION_FOR_Y);
                 moveCounter++;
-                continueGame = false;
-            } else if (continueGame && getPawns().get("11").getImage() == ANIMATION_FOR_Y && imageView.getImage() == ANIMATION_FOR_X) {
-                getPawns().get("13").setImage(ANIMATION_FOR_Y);
+
+            } else if (continueGame && path == 1 && pawns.get("13").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("13").setImage(ANIMATION_FOR_Y);
                 moveCounter++;
-                continueGame = false;
-            } else if (continueGame && getPawns().get("11").getImage() == ANIMATION_FOR_Y && getPawns().get("13").getImage() == ANIMATION_FOR_X) {
-                getPawns().get("31").setImage(ANIMATION_FOR_Y);
+
+            } else if (continueGame && path == 2 && pawns.get("31").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("31").setImage(ANIMATION_FOR_Y);
                 moveCounter++;
-                continueGame = false;
-            } else if (continueGame && getPawns().get("11").getImage() == ANIMATION_FOR_X && getPawns().get("13").getImage() == IMAGE_FOR_EMPTY_FIELD) {
-                getPawns().get("13").setImage(ANIMATION_FOR_Y);
+
+            } else if (continueGame && path == 3 && pawns.get("11").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("11").setImage(ANIMATION_FOR_Y);
                 moveCounter++;
-                continueGame = false;
-            } else if (continueGame && getPawns().get("11").getImage() == ANIMATION_FOR_X && getPawns().get("13").getImage() == ANIMATION_FOR_X) {
-                getPawns().get("33").setImage(ANIMATION_FOR_Y);
+
+            } else if (moveCounter == 1 ){
+
+                String key = "22";
+                while (pawns.get(key).getImage() != IMAGE_FOR_EMPTY_FIELD) {
+                    int col = RANDOM.nextInt(3) + 1;
+                    int row = RANDOM.nextInt(3) + 1;
+                    key = String.valueOf(col) + String.valueOf(row);
+
+                }
+                pawns.get(key).setImage(ANIMATION_FOR_Y);
                 moveCounter++;
-                continueGame = false;
+
             }
         } else {
-            int col = RANDOM.nextInt(3) + 1;
-            int row = RANDOM.nextInt(3) + 1;
-            System.out.println("Computer Col " + col + " Row " + row);
-            String key = String.valueOf(col) + String.valueOf(row);
-            ImageView imageView = getPawns().get(key);
+            continueGame = true;
             canHeWin();
-            if (continueGame && imageView.getImage() != ANIMATION_FOR_Y && imageView.getImage() != ANIMATION_FOR_X) {
-                imageView.setImage(ANIMATION_FOR_Y);
-                moveCounter++;
-                continueGame = false;
-            } else if (continueGame && (imageView.getImage() == ANIMATION_FOR_Y || imageView.getImage() == ANIMATION_FOR_X)){
-                System.out.println("Field is taken");
-                handleComputerClick();
+            if (continueGame) {
+
+                String key = "22";
+                while (pawns.get(key).getImage() != IMAGE_FOR_EMPTY_FIELD) {
+                    int col = RANDOM.nextInt(3) + 1;
+                    int row = RANDOM.nextInt(3) + 1;
+                    key = String.valueOf(col) + String.valueOf(row);
+                }
+
+                pawns.get(key).setImage(ANIMATION_FOR_Y);
+
             }
         }
     }
