@@ -21,7 +21,7 @@ import static ticktacktoe.Graphics.ANIMATION_FOR_X;
 
 public class Game {
 
-    private Pawn pawn;
+    private PawnContainer pawnContainer;
     private Button exitButton, newGameButton;
     private VBox buttons;
 
@@ -30,11 +30,17 @@ public class Game {
 
     private String playerName;
     private int numberOfRounds;
+    private DifficultyLevel level;
 
-    private Users user = new Users();
+    private UsersResults user = new UsersResults();
+    //private SavingGame save = new SavingGame();
 
     public Game() {
-        pawn = new Pawn(this, user);
+        pawnContainer = new PawnContainer(this, user);
+    }
+
+    public DifficultyLevel getLevel() {
+        return level;
     }
 
     public void gamePlay(Stage primaryStage) {
@@ -57,36 +63,36 @@ public class Game {
         dialog.setHeaderText(null);
         dialog.setContentText("Please enter your name:");
         Optional<String> result = dialog.showAndWait();
-        playerName = result.get();
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Rundy");
-        alert.setHeaderText("Do ilu wygranych rund chcesz zagrać?");
-        alert.setContentText("Choose your option.");
-
-        ButtonType buttonTypeOne = new ButtonType("One");
-        ButtonType buttonTypeTwo = new ButtonType("Two");
-        ButtonType buttonTypeThree = new ButtonType("Three");
-        ButtonType buttonTypeFour = new ButtonType("Four");
-        ButtonType buttonTypeFive = new ButtonType("Five");
-        ButtonType buttonTypeCancel = new ButtonType("Exit", ButtonData.CANCEL_CLOSE);
-
-        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeThree, buttonTypeFour, buttonTypeFive, buttonTypeCancel);
-
-        Optional<ButtonType> result1 = alert.showAndWait();
-        if (result1.get() == buttonTypeOne){
-            numberOfRounds = 1;
-        } else if (result1.get() == buttonTypeTwo) {
-            numberOfRounds = 2;
-        } else if (result1.get() == buttonTypeThree) {
-            numberOfRounds = 3;
-        } else if (result1.get() == buttonTypeFour) {
-            numberOfRounds = 4;
-        } else if (result1.get() == buttonTypeFive) {
-            numberOfRounds = 5;
+        if (result.isPresent()) {
+            playerName = result.get();
         } else {
             System.exit(0);
         }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Difficulty");
+        alert.setHeaderText("How tough your opponent should be?");
+        alert.setContentText("Choose your option.");
+
+        ButtonType buttonTypeEasy = new ButtonType("Easy");
+        ButtonType buttonTypeMedium = new ButtonType("Medium");
+        ButtonType buttonTypeHard = new ButtonType("Hard");
+        ButtonType buttonTypeCancel = new ButtonType("Exit", ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(buttonTypeEasy, buttonTypeMedium, buttonTypeHard, buttonTypeCancel);
+
+        Optional<ButtonType> result1 = alert.showAndWait();
+        if (result1.get() == buttonTypeEasy){
+            level = DifficultyLevel.EASY;
+        } else if (result1.get() == buttonTypeMedium) {
+            level = DifficultyLevel.MEDIUM;
+        } else if (result1.get() == buttonTypeHard) {
+            level = DifficultyLevel.HARD;
+        } else {
+            System.exit(0);
+        }
+
+        howManyRounds();
 
         playerOneName = new Text(playerName);
         playerOneName.setFont(Font.font("Verdana", 30));
@@ -120,6 +126,13 @@ public class Game {
 
             newGame(primaryStage);
         }
+/*
+
+        else if (event.getSource().equals(saveGameButton)) {
+            save.map.put(playerName,Integer.toString(user.getUserScore()) + "|" + Integer.toString(user.getCompScore()) + "|" + Integer.toString(numberOfRounds));
+            save.saveMap();
+        }
+*/
 
     }
 
@@ -166,7 +179,7 @@ public class Game {
     }
 
     public void newGame(Stage primaryStage) {
-        pawn.setMoveCounter(0);
+        pawnContainer.setMoveCounter(0);
         BackgroundSize backgroundSize = new BackgroundSize(200, 200, true, true, true, true);
         BackgroundImage backgroundImage = new BackgroundImage(IMAGE_FOR_BACKGROUND, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
@@ -175,7 +188,7 @@ public class Game {
         newGameBoardPane.setCursor(new ImageCursor(IMAGE_FOR_CURSOR));
         newGameBoardPane.setAlignment(Pos.CENTER);
 
-        pawn.pawnSetting(primaryStage, newGameBoardPane);
+        pawnContainer.pawnSetting(primaryStage, newGameBoardPane);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setBackground(background);
@@ -199,7 +212,7 @@ public class Game {
             view.setImage(ANIMATION_FOR_X);
             System.out.println("Player Col " + col + " Row " + row);
 
-            pawn.verifyIfFinish();
+            pawnContainer.verifyIfFinish();
             if (user.isUserWin()) {
                 user.setUserScore(user.getUserScore()+1);
                 showScore(primaryStage);
@@ -211,8 +224,21 @@ public class Game {
                 user.setDraw(false);
             }
 
-            pawn.handleComputerClick();
-            pawn.verifyIfFinish();
+            if (level == DifficultyLevel.EASY) {
+
+                pawnContainer.handleEasyComputerClick();
+
+            } else if (level == DifficultyLevel.MEDIUM){
+
+                pawnContainer.handleMediumComputerClick();
+
+            } else if (level == DifficultyLevel.HARD) {
+
+                pawnContainer.handleHardComputerClick();
+
+            }
+            pawnContainer.verifyIfFinish();
+
             if (user.isCompWin()) {
                 user.setCompScore(user.getCompScore()+1);
                 showScore(primaryStage);
@@ -245,6 +271,21 @@ public class Game {
 
         topScoreBoard = new HBox(playerOneName, playerOneScore, playerTwoName, playerTwoScore);
         topScoreBoard.setSpacing(10);
+    }
+
+    private void howManyRounds(){
+        TextInputDialog dialog2 = new TextInputDialog("");
+        dialog2.setTitle("Number of rounds.");
+        dialog2.setHeaderText(null);
+        dialog2.setContentText("Please enter how many rounds do you want to play:");
+        Optional<String> result2 = dialog2.showAndWait();
+        if (result2.isPresent()) {
+            try {
+                numberOfRounds = Integer.parseInt(result2.get());
+            } catch (NumberFormatException e) {
+                howManyRounds();
+            }
+        }
     }
 
 }

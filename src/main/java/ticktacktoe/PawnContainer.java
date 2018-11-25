@@ -12,12 +12,12 @@ import static ticktacktoe.Graphics.ANIMATION_FOR_X;
 import static ticktacktoe.Graphics.ANIMATION_FOR_Y;
 import static ticktacktoe.Graphics.IMAGE_FOR_EMPTY_FIELD;
 
-public class Pawn {
+public class PawnContainer {
     private static final double PAWN_SIZE_MULTIPLIER = 0.30;
     private static final Random RANDOM = new Random();
 
     private Game game;
-    private Users user;
+    private UsersResults user;
 
     private ImageView pawn11;
     private ImageView pawn12;
@@ -34,7 +34,7 @@ public class Pawn {
     private int moveCounter = 0;
     private boolean continueGame = true;
 
-    public Pawn(Game game, Users user) {
+    public PawnContainer(Game game, UsersResults user) {
         this.game = game;
         this.user = user;
     }
@@ -135,7 +135,7 @@ public class Pawn {
             user.setCompWin(true);
         } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
             user.setCompWin(true);
-        } else if (pawns.get("11").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("33").getImage() == ANIMATION_FOR_Y) {
+        } else if (pawns.get("31").getImage() == ANIMATION_FOR_Y && pawns.get("22").getImage() == ANIMATION_FOR_Y && pawns.get("13").getImage() == ANIMATION_FOR_Y) {
             user.setCompWin(true);
         } else if (pawns.get("11").getImage() != IMAGE_FOR_EMPTY_FIELD && pawns.get("12").getImage() != IMAGE_FOR_EMPTY_FIELD
                 && pawns.get("13").getImage() != IMAGE_FOR_EMPTY_FIELD
@@ -186,7 +186,128 @@ public class Pawn {
         return continueGame;
     }
 
-    public void handleComputerClick() {
+    public boolean canHeWinMedium() {
+        for (Map.Entry<String, ImageView> entry : pawns.entrySet()) {
+            if (entry.getValue().getImage() == IMAGE_FOR_EMPTY_FIELD) {
+                entry.getValue().setImage(ANIMATION_FOR_Y);
+                verifyIfFinish();
+                if (user.isCompWin()) {
+                    user.setCompWin(false);
+                    moveCounter++;
+                    continueGame = false;
+                    break;
+                }
+                entry.getValue().setImage(ANIMATION_FOR_X);
+                verifyIfFinish();
+                if (user.isUserWin()) {
+                    user.setUserWin(false);
+                    entry.getValue().setImage(ANIMATION_FOR_Y);
+                    moveCounter++;
+                    continueGame = false;
+                    break;
+                }
+                entry.getValue().setImage(IMAGE_FOR_EMPTY_FIELD);
+            }
+
+        }
+        return continueGame;
+    }
+
+    public void handleEasyComputerClick() {
+
+        String key = "22";
+        while (pawns.get(key).getImage() != IMAGE_FOR_EMPTY_FIELD) {
+            int col = RANDOM.nextInt(3) + 1;
+            int row = RANDOM.nextInt(3) + 1;
+            key = String.valueOf(col) + String.valueOf(row);
+
+        }
+
+        pawns.get(key).setImage(ANIMATION_FOR_Y);
+
+    }
+
+    public void handleMediumComputerClick() {
+
+        int path = RANDOM.nextInt(4);
+        if (moveCounter == 0) {
+            if (path == 0 && pawns.get("11").getImage() == IMAGE_FOR_EMPTY_FIELD){
+
+                pawns.get("11").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            } else if (path == 1 && pawns.get("31").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("31").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            } else if (path == 2 && pawns.get("13").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("13").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            } else if (path == 3 && pawns.get("33").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("33").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            } else {
+                pawns.get("22").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+            }
+        } else if (moveCounter == 1) {
+            canHeWinMedium();
+            if (continueGame && path == 0 && pawns.get("33").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("33").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            } else if (continueGame && path == 1 && pawns.get("13").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("13").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            } else if (continueGame && path == 2 && pawns.get("31").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("31").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            } else if (continueGame && path == 3 && pawns.get("11").getImage() == IMAGE_FOR_EMPTY_FIELD) {
+
+                pawns.get("11").setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            } else if (moveCounter == 1 ){
+
+                String key = "22";
+                while (pawns.get(key).getImage() != IMAGE_FOR_EMPTY_FIELD) {
+                    int col = RANDOM.nextInt(3) + 1;
+                    int row = RANDOM.nextInt(3) + 1;
+                    key = String.valueOf(col) + String.valueOf(row);
+
+                }
+                pawns.get(key).setImage(ANIMATION_FOR_Y);
+                moveCounter++;
+
+            }
+        } else {
+            continueGame = true;
+            canHeWinMedium();
+            if (continueGame) {
+
+                String key = "22";
+                while (pawns.get(key).getImage() != IMAGE_FOR_EMPTY_FIELD) {
+                    int col = RANDOM.nextInt(3) + 1;
+                    int row = RANDOM.nextInt(3) + 1;
+                    key = String.valueOf(col) + String.valueOf(row);
+                }
+
+                pawns.get(key).setImage(ANIMATION_FOR_Y);
+            }
+        }
+    }
+
+    public void handleHardComputerClick() {
         int path = RANDOM.nextInt(4);
         if (moveCounter == 0) {
             //int path = RANDOM.nextInt(4);

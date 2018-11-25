@@ -1,11 +1,37 @@
 package ticktacktoe;
 
+import javafx.application.Application;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.stage.Stage;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
+import org.testfx.api.FxToolkit;
+import org.testfx.framework.junit.ApplicationTest;
 
-import static org.junit.Assert.*;
+public class GameTest extends ApplicationTest {
 
-public class GameTest {
+    Game game = new Game();
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        primaryStage.setResizable(false);
+
+        game.gamePlay(primaryStage);
+
+
+    }
+
+    @After
+    public void tearDown () throws Exception {
+        FxToolkit.hideStage();
+        release(new KeyCode[]{});
+        release(new MouseButton[]{});
+    }
+
+
 
     @Test
     public void gamePlay() {
@@ -28,17 +54,19 @@ public class GameTest {
     }
 
     @Test
-    public void zeroingScore() {
+    public void testZeroingScore() {
         //Given
         Game game = new Game();
-        Users users = new Users();
+        UsersResults usersResults = new UsersResults();
 
-        users.setUserScore(21);
-        users.setCompScore(321);
+        usersResults.setUserScore(21);
+        usersResults.setCompScore(321);
         //When
-        zeroingScore();
+        //game.gamePlay(primaryStage);
+
+        game.zeroingScore();
         //Then
-        Assert.assertEquals(21, users.getUserScore());
-        Assert.assertEquals(321, users.getCompScore());
+        Assert.assertEquals(0, usersResults.getUserScore());
+        Assert.assertEquals(0, usersResults.getCompScore());
     }
 }

@@ -3,16 +3,14 @@ package ticktacktoe;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
-public class UsersTest {
+public class UsersResultsTest {
 
     @Test
     public void testIsUserWin() {
         //Given
-        Users users = new Users();
+        UsersResults usersResults = new UsersResults();
         //When
-        boolean result = users.isUserWin();
+        boolean result = usersResults.isUserWin();
         //Then
         Assert.assertEquals(false, result);
     }
@@ -20,9 +18,9 @@ public class UsersTest {
     @Test
     public void testIsCompWin() {
         //Given
-        Users users = new Users();
+        UsersResults usersResults = new UsersResults();
         //When
-        boolean result = users.isCompWin();
+        boolean result = usersResults.isCompWin();
         //Then
         Assert.assertEquals(false, result);
     }
@@ -30,9 +28,9 @@ public class UsersTest {
     @Test
     public void testIsDraw() {
         //Given
-        Users users = new Users();
+        UsersResults usersResults = new UsersResults();
         //When
-        boolean result = users.isDraw();
+        boolean result = usersResults.isDraw();
         //Then
         Assert.assertEquals(false, result);
     }
@@ -40,10 +38,10 @@ public class UsersTest {
     @Test
     public void testGetUserScore() {
         //Given
-        Users users = new Users();
-        users.setUserScore(21);
+        UsersResults usersResults = new UsersResults();
+        usersResults.setUserScore(21);
         //When
-        int result = users.getUserScore();
+        int result = usersResults.getUserScore();
         //Then
         Assert.assertEquals(21, result);
     }
@@ -51,10 +49,10 @@ public class UsersTest {
     @Test
     public void testGetCompScore() {
         //Given
-        Users users = new Users();
-        users.setCompScore(7);
+        UsersResults usersResults = new UsersResults();
+        usersResults.setCompScore(7);
         //When
-        int result = users.getCompScore();
+        int result = usersResults.getCompScore();
         //Then
         Assert.assertEquals(7, result);
     }
@@ -62,10 +60,10 @@ public class UsersTest {
     @Test
     public void testSetUserWin() {
         //Given
-        Users users = new Users();
+        UsersResults usersResults = new UsersResults();
         //When
-        users.setUserWin(true);
-        boolean result = users.isUserWin();
+        usersResults.setUserWin(true);
+        boolean result = usersResults.isUserWin();
         //Then
         Assert.assertEquals(true, result);
     }
@@ -73,10 +71,10 @@ public class UsersTest {
     @Test
     public void testSetCompWin() {
         //Given
-        Users users = new Users();
+        UsersResults usersResults = new UsersResults();
         //When
-        users.setCompWin(true);
-        boolean result = users.isCompWin();
+        usersResults.setCompWin(true);
+        boolean result = usersResults.isCompWin();
         //Then
         Assert.assertEquals(true, result);
     }
@@ -84,10 +82,10 @@ public class UsersTest {
     @Test
     public void testSetDraw() {
         //Given
-        Users users = new Users();
+        UsersResults usersResults = new UsersResults();
         //When
-        users.setDraw(true);
-        boolean result = users.isDraw();
+        usersResults.setDraw(true);
+        boolean result = usersResults.isDraw();
         //Then
         Assert.assertEquals(true, result);
     }
@@ -95,20 +93,20 @@ public class UsersTest {
     @Test
     public void setUserScore() {
         //Given
-        Users users = new Users();
+        UsersResults usersResults = new UsersResults();
         //When
-        users.setUserScore(33);
+        usersResults.setUserScore(33);
         //Then
-        Assert.assertEquals(33, users.getUserScore());
+        Assert.assertEquals(33, usersResults.getUserScore());
     }
 
     @Test
     public void setCompScore() {
         //Given
-        Users users = new Users();
+        UsersResults usersResults = new UsersResults();
         //When
-        users.setUserScore(89);
+        usersResults.setUserScore(89);
         //Then
-        Assert.assertEquals(89, users.getUserScore());
+        Assert.assertEquals(89, usersResults.getUserScore());
     }
 }

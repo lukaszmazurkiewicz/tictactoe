@@ -1,6 +1,6 @@
 package ticktacktoe;
 
-public class Users {
+public class UsersResults {
     private boolean userWin = false;
     private boolean compWin = false;
     private boolean draw = false;
