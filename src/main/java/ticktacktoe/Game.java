@@ -22,7 +22,7 @@ import static ticktacktoe.Graphics.ANIMATION_FOR_X;
 public class Game {
 
     private PawnContainer pawnContainer;
-    private Button exitButton, newGameButton;
+    private Button exitButton, newGameButton, saveGameButton, loadGameButton;
     private VBox buttons;
 
     private HBox topScoreBoard;
@@ -33,14 +33,10 @@ public class Game {
     private DifficultyLevel level;
 
     private UsersResults user = new UsersResults();
-    //private SavingGame save = new SavingGame();
+    private SavingService save = new SavingService();
 
     public Game() {
         pawnContainer = new PawnContainer(this, user);
-    }
-
-    public DifficultyLevel getLevel() {
-        return level;
     }
 
     public void gamePlay(Stage primaryStage) {
@@ -53,8 +49,15 @@ public class Game {
         newGameButton.setMinSize(200, 30);
         newGameButton.setOnMouseClicked(e -> handleButtonClick(primaryStage, e));
 
+        saveGameButton = new Button("Save Game");
+        saveGameButton.setMinSize(200,30);
+        saveGameButton.setOnMouseClicked(e -> handleButtonClick(primaryStage, e));
 
-        buttons = new VBox(exitButton, newGameButton);
+        loadGameButton = new Button("Load Game");
+        loadGameButton.setMinSize(200,30);
+        loadGameButton.setOnMouseClicked(e -> handleButtonClick(primaryStage, e));
+
+        buttons = new VBox(exitButton, newGameButton, saveGameButton, loadGameButton);
         buttons.setSpacing(20);
         buttons.setPadding(new Insets(20, 20, 20, 20));
 
@@ -119,20 +122,46 @@ public class Game {
     public void handleButtonClick(Stage primaryStage, MouseEvent event) {
 
         if (event.getSource().equals(exitButton)) {
+
             System.exit(0);
+
         } else if (event.getSource().equals(newGameButton)) {
 
             zeroingScore();
-
             newGame(primaryStage);
-        }
-/*
 
-        else if (event.getSource().equals(saveGameButton)) {
-            save.map.put(playerName,Integer.toString(user.getUserScore()) + "|" + Integer.toString(user.getCompScore()) + "|" + Integer.toString(numberOfRounds));
+        } else if (event.getSource().equals(saveGameButton)) {
+
+            save.results.put(playerName,Integer.toString(user.getUserScore()) + "-" + Integer.toString(user.getCompScore()) + "-" + Integer.toString(numberOfRounds) + "-" + level);
             save.saveMap();
+
+        } else if (event.getSource().equals(loadGameButton)) {
+
+            save.loadMap();
+            if (!save.results.get(playerName).isEmpty()) {
+
+                String gameSpecifics = save.results.get(playerName);
+                String gameSpecificsDivided[] = gameSpecifics.split("-");
+                user.setUserScore(Integer.valueOf(gameSpecificsDivided[0]));
+                user.setCompScore(Integer.valueOf(gameSpecificsDivided[1]));
+                numberOfRounds = Integer.valueOf(gameSpecificsDivided[2]);
+                level = DifficultyLevel.valueOf(gameSpecificsDivided[3]);
+
+                playerOneScore = new Text(Integer.toString(user.getUserScore()));
+                playerOneScore.setFont(Font.font("Verdana", 30));
+                playerOneScore.setFill(Color.AQUA);
+
+                playerTwoScore = new Text(Integer.toString(user.getCompScore()));
+                playerTwoScore.setFont(Font.font("Verdana", 30));
+                playerTwoScore.setFill(Color.AQUA);
+
+                topScoreBoard = new HBox(playerOneName, playerOneScore, playerTwoName, playerTwoScore);
+                topScoreBoard.setSpacing(10);
+
+                newGame(primaryStage);
+            }
         }
-*/
+
 
     }
 
